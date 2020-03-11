@@ -33,15 +33,15 @@
 3. Log into a Postgres session:  
 `psql`
 4. Create database with name **Taskkez**:  
-`CREATE DATABASE Taskkez;`
+`CREATE DATABASE taskkez;`
 5. Create a database user which we will use to connect to the database:  
-`CREATE USER Taskkez_user WITH PASSWORD 'Taskkez_pass';`
+`CREATE USER taskkez_user WITH PASSWORD 'taskkez_pass';`
 6. Modify a few of the connection parameters for the user we just created:  
-`ALTER ROLE Taskkez_user SET client_encoding TO 'utf8';`  
-`ALTER ROLE Taskkez_user SET default_transaction_isolation TO 'read committed';`  
-`ALTER ROLE Taskkez_user SET timezone TO 'UTC';` 
+`ALTER ROLE taskkez_user SET client_encoding TO 'utf8';`  
+`ALTER ROLE taskkez_user SET default_transaction_isolation TO 'read committed';`  
+`ALTER ROLE taskkez_user SET timezone TO 'UTC';` 
 7. Give our database user access rights to the database we created:  
-`GRANT ALL PRIVILEGES ON DATABASE Taskkez TO Taskkez_user;`
+`GRANT ALL PRIVILEGES ON DATABASE Taskkez TO taskkez_user;`
 8. Exit the SQL prompt and the postgres user's shell session:  
 `\q` then `exit`
 
