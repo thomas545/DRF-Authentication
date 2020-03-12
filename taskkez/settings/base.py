@@ -21,11 +21,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
     # rest apps
     'rest_framework',
+    'rest_auth',
+    'allauth',
+    'rest_framework.authtoken',
+    'rest_auth.registration',
+    'allauth.account',
     'django_filters',
-
 
     # packages
     'phonenumber_field',
@@ -93,9 +98,20 @@ DATABASES = {
 }
 
 
+# Rest auth configuration
+SITE_ID = 1
+REST_USE_JWT = True
+REST_AUTH_SERIALIZERS = {
+    # 'LOGIN_SERIALIZER': 'LoginSerializer',
+    # 'USER_DETAILS_SERIALIZER': 'demo.serializers.UserSerializer'
+}
 
-
-
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'users.serializers.RegisterUserSerializer',
+}
+# ACCOUNT_EMAIL_VERIFICATION SETTINGS
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_REQUIRED = True
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators

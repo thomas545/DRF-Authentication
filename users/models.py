@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.contrib.auth import get_user_model
 from django.utils.translation import ugettext_lazy as _
 from django.core.validators import MaxLengthValidator
@@ -33,9 +35,9 @@ class Profile(TimeStampedModel):
     profile_picture = models.ImageField(
         upload_to=image_paths.profile_image_path, blank=True, null=True)
     # skills = relation with category
-    about = models.TextField(verbose_name=_('About you'), )
+    about = models.TextField(blank=True, null=True)
     address = models.ForeignKey(
-        Address, related_name='address', on_delete=models.CASCADE)
+        Address, related_name='address', on_delete=models.CASCADE, null=True, blank=True)
     birth_date = models.DateField(blank=True, null=True)
     phone_number = PhoneNumberField(blank=True, null=True, unique=True, error_messages={
                                     'unique': _("A phone number already exists."), })
@@ -43,8 +45,14 @@ class Profile(TimeStampedModel):
         max_length=1, choices=choices.TRANSPORTATION_CHOICES, null=True, blank=True)
     gender = models.CharField(
         max_length=1, choices=choices.GENDER_CHOICES, null=True, blank=True)
-    id_number = models.IntegerField(validators=[MaxLengthValidator])
+    id_number = models.IntegerField(validators=[MaxLengthValidator(14)], blank=True, null=True)
     id_images = models.ForeignKey(
-        IDImages, related_name='id_images', on_delete=models.CASCADE)
+        IDImages, related_name='id_images', on_delete=models.CASCADE, blank=True, null=True)
     accept_terms = models.BooleanField(default=False)
     is_tasker = models.BooleanField(default=False)
+
+
+@receiver(post_save, sender=User)
+def create_profile(sender, instance, created, *args, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
