@@ -12,6 +12,11 @@ router = routers.DefaultRouter()
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('rest_framework.urls')),
+
+    path('', include('users.urls')),
+
+
+
 ]
 
 

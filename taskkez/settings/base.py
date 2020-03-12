@@ -22,9 +22,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # packages
+    # rest apps
     'rest_framework',
     'django_filters',
+
+
+    # packages
+    'phonenumber_field',
 
     # apps
     'users',
@@ -136,7 +140,9 @@ JWT_AUTH = {
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
 }
 
-
+# phone number config
+PHONENUMBER_DB_FORMAT = 'INTERNATIONAL'
+PHONENUMBER_DEFAULT_REGION = 'EG'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
