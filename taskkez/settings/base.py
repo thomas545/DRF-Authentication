@@ -102,8 +102,8 @@ DATABASES = {
 SITE_ID = 1
 REST_USE_JWT = True
 REST_AUTH_SERIALIZERS = {
-    # 'LOGIN_SERIALIZER': 'LoginSerializer',
-    # 'USER_DETAILS_SERIALIZER': 'demo.serializers.UserSerializer'
+    'LOGIN_SERIALIZER': 'users.serializers.LoginUserSerializer',
+    'USER_DETAILS_SERIALIZER': 'users.serializers.UserSerializer'
 }
 
 REST_AUTH_REGISTER_SERIALIZERS = {
@@ -151,7 +151,7 @@ REST_FRAMEWORK = {
 
 
 JWT_AUTH = {
-    'JWT_EXPIRATION_DELTA': datetime.timedelta(seconds=300),
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=30),
     'JWT_ALLOW_REFRESH': True,
     'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=7),
 }
