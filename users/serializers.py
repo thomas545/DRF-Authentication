@@ -120,6 +120,19 @@ class LoginUserSerializer(LoginSerializer):
         return attrs
 
 
+
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Address
+        exclude = ('created', 'modified',)
+
+class IDImagesSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = models.IDImages
+        exclude = ('created', 'modified',)
+
+
 class UserSerializer(serializers.ModelSerializer):
     """
     This serializer include endpoint `/user/` include (GET, PUT) methods  
@@ -133,11 +146,13 @@ class UserSerializer(serializers.ModelSerializer):
                             message=_("phone number already exist."))])
     profile_picture = Base64ImageField(required=False, source='profile.profile_picture')
     about = serializers.CharField(required=False, source='profile.about')
-    address = serializers.CharField(source='profile.address', required=False)
+    # address = serializers.PrimaryKeyRelatedField(source='profile.address', queryset=models.Address.objects.all(), required=False)
+    address = AddressSerializer(required=False, many=True)
     birth_date = serializers.DateField(source='profile.birth_date', required=False)
     transportation = serializers.ChoiceField(choices=choices.TRANSPORTATION_CHOICES, source='profile.transportation', required=False)
     gender = serializers.ChoiceField(choices=choices.GENDER_CHOICES, source='profile.gender', required=False)
     id_number = serializers.IntegerField(source='profile.id_number', required=False)
+    id_images = IDImagesSerializer(source='profile.id_images', required=False, many=True)
     accept_terms = serializers.BooleanField(source='profile.accept_terms', required=False)
     is_tasker = serializers.BooleanField(source='profile.is_tasker', required=False)
 
@@ -145,7 +160,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('pk', 'first_name', 'last_name', 'username', 'email', 'phone_number', 
                     'profile_picture', 'about', 'address', 'birth_date', 'transportation', 
-                    'gender', 'id_number', 'accept_terms', 'is_tasker',)
+                    'gender', 'id_number', 'id_images', 'accept_terms', 'is_tasker',)
         read_only_fields = ('username', 'birth_date')
 
 
@@ -168,13 +183,12 @@ class UserSerializer(serializers.ModelSerializer):
         transportation = profile_data.get('transportation', None)
         gender = profile_data.get('gender', None)
         id_number = profile_data.get('id_number', None)
+        id_images = profile_data.get('id_images', [])
         is_tasker = profile_data.get('is_tasker', None)
         new_email = validated_data.pop('email', None)
 
 
         user = super(UserSerializer, self).update(instance, validated_data)
-        print("user ->>", user)
-        print("new_email ->>", new_email)
 
         if new_email:
             if EmailAddress.objects.filter(user=user, email=new_email, verified=False).exists():
@@ -183,7 +197,7 @@ class UserSerializer(serializers.ModelSerializer):
             if not EmailAddress.objects.filter(user=user, email=new_email, verified=False).exists():
                 email_address = EmailAddress.objects.add_email(self.context.get('request'), user, new_email)
                 confirmation = EmailConfirmationHMAC(email_address)
-                print("confirmation key ->", confirmation.key) #MTI:1jChkQ:GQ0IgYfG6zHUg6GL3eULNt88UU4
+                print("confirmation key ->", confirmation.key)
                 # TODO send mail to confirmation
 
 
@@ -205,10 +219,17 @@ class UserSerializer(serializers.ModelSerializer):
                 profile.gender = gender
             if id_number:
                 profile.id_number = id_number
+            if id_images:
+                profile.id_images = id_images
             if is_tasker:
                 profile.is_tasker = is_tasker
         profile.save()
         return instance
 
+    # def to_representation(self, instance):
+    #     data = super(UserSerializer, self).to_representation(instance)
+    #     print(instance.profile.address)
+    #     data['address'] = AddressSerializer(instance=instance.profile.address).data
+    #     return data
 
 

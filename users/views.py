@@ -1,5 +1,6 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.utils.translation import ugettext_lazy as _
@@ -44,7 +45,6 @@ class RegisterUserView(RegisterView):
         if getattr(settings, 'REST_USE_JWT', False):
             self.token = jwt_encode(user)
         email = EmailAddress.objects.get(user=user, email=user.email)
-        print("email ->>" , email)
         confirmation = EmailConfirmationHMAC(email)
         print("key ->>>", confirmation.key)
         # TODO send email confirmation here
@@ -139,12 +139,10 @@ class PasswordResetConfirmUserView(generics.GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(
-            {"detail": _("Password has been reset with the new password.")}
-        )
+        return Response({"detail": _("Password has been reset with the new password.")})
 
 
-class PasswordChangeView(PasswordChangeView):
+class PasswordUserChangeView(PasswordChangeView):
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -153,3 +151,12 @@ class PasswordChangeView(PasswordChangeView):
         return Response({"detail": _("New password has been Changed.")})
 
 
+class UserDetailsAPIView(generics.RetrieveUpdateAPIView):
+    serializer_class = serializers.UserSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_object(self):
+        return self.request.user
+
+    def get_queryset(self):
+        return get_user_model().objects.none()

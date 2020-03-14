@@ -41,7 +41,7 @@
 `ALTER ROLE taskkez_user SET default_transaction_isolation TO 'read committed';`  
 `ALTER ROLE taskkez_user SET timezone TO 'UTC';` 
 7. Give our database user access rights to the database we created:  
-`GRANT ALL PRIVILEGES ON DATABASE Taskkez TO taskkez_user;`
+`GRANT ALL PRIVILEGES ON DATABASE taskkez TO taskkez_user;`
 8. Exit the SQL prompt and the postgres user's shell session:  
 `\q` then `exit`
 
